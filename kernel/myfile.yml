@@ -1,0 +1,58 @@
+
+---
+ 
+- name: Install software & patching kernel
+  hosts: kernel
+  become: yes
+
+  tasks:
+   - name: Upgrade all pack
+     yum:
+       name: '*'
+       state: latest
+
+   - name: Install epel
+     yum:
+       pkg: epel-release
+       state: latest
+
+   - name: Install required software
+     yum: pkg={{ item }} state=latest
+     with_items:
+        - 'gcc'
+        - 'wget'
+        - 'net-tools'
+        - 'strace'
+        - 'psmisc'
+        - 'lsof'
+        - 'bind-utils'
+        - 'nc'
+        - 'atop'
+        - 'iftop'
+        - 'mc'
+        - 'nano'
+        - 'htop'
+   - name: Update kernel setup
+     sysctl: name="{{ item.name }}" value="{{ item.value }}" sysctl_set=yes state=present
+     with_items:
+      - { name: 'net.ipv4.icmp_echo_ignore_all', value: 1 }
+      - { name: 'net.ipv4.tcp_rfc1337', value: 1 }
+      - { name: 'vm.swappiness', value: 5 }
+      - { name: 'net.ipv4.conf.all.accept_redirects', value: 0 }
+      - { name: 'net.ipv4.conf.all.secure_redirects', value: 0 }
+      - { name: 'net.ipv4.conf.all.send_redirects', value: 0 }
+      - { name: 'net.ipv4.tcp_keepalive_time', value: 60 }
+      - { name: 'net.ipv4.tcp_keepalive_intvl', value: 15 }
+      - { name: 'net.ipv4.tcp_keepalive_probes', value: 5 }
+      - { name: 'net.core.somaxconn', value: 15000 }
+      - { name: 'net.core.rmem_max', value: 16777216 }
+      - { name: 'net.core.wmem_max', value: 16777216 }
+      - { name: 'net.ipv4.tcp_congestion_control', value: htcp }
+      - { name: 'net.ipv4.tcp_no_metrics_save', value: 1 }
+      - { name: 'net.ipv4.tcp_tw_reuse', value: 1 }
+      - { name: 'net.ipv4.tcp_no_metrics_save', value: 1 }
+      - { name: 'net.ipv4.tcp_no_metrics_save', value: 1 }
+      - { name: 'net.ipv4.tcp_no_metrics_save', value: 1 }
+      - { name: 'net.ipv4.tcp_no_metrics_save', value: 1 }
+      - { name: 'net.ipv4.tcp_no_metrics_save', value: 1 }
+      - { name: 'net.ipv4.tcp_fin_timeout', value: 10 }
